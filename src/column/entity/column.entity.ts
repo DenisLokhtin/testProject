@@ -1,18 +1,24 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn,} from "typeorm";
-import {CardEntity} from "../../card/entity/card.entity";
-import {UserEntity} from "../../user/entity/user.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CardEntity } from '../../card/entity/card.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 
-@Entity({ name: "columns" })
+@Entity({ name: 'columns' })
 export class ColumnEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.columns, { onDelete: "CASCADE" })
-    author_: UserEntity;
+  @ManyToOne(() => UserEntity, (user) => user.columns, { onDelete: 'CASCADE' })
+  author_: UserEntity;
 
-    @OneToMany(() => CardEntity, (card) => card.column)
-    cards: CardEntity[];
+  @OneToMany(() => CardEntity, (card) => card.column)
+  cards: CardEntity[];
 }

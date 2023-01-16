@@ -1,3 +1,3 @@
 export class UpdateColumnDto {
-    title?: string;
+  title?: string;
 }
