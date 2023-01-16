@@ -17,9 +17,6 @@ export class CommentEntity {
   id: number;
 
   @Column()
-  title: string;
-
-  @Column()
   text: string;
 
   @ManyToOne(() => ColumnEntity, (column) => column.author_, {
@@ -29,4 +26,7 @@ export class CommentEntity {
 
   @ManyToOne(() => CardEntity, (card) => card.comment, { onDelete: 'CASCADE' })
   card: CardEntity;
+
+  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 }

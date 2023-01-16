@@ -66,7 +66,10 @@ export class UserService {
   }
 
   async findById(id: number): Promise<UserEntity> {
-    return this.userRepo.findOneBy({ id: id });
+    return this.userRepo.findOne({
+      where: { id: id },
+      relations: { columns: true, cards: true, comments: true },
+    });
   }
 
   generateJwt(user: UserEntity): string {

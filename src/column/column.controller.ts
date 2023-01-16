@@ -17,12 +17,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ColumnEntity } from './entity/column.entity';
 import { CreateColumnDto } from './dto/createColumn.dto';
 import { UpdateColumnDto } from './dto/updateColumn.dto';
 import { AuthGuard } from '../user/guards/user.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
 import { UserEntity } from '../user/entity/user.entity';
+import { columnAuthor } from '../user/guards/columnAuthor.guard';
 
 @ApiTags('columns')
 @Controller('columns')
@@ -154,7 +154,7 @@ export class ColumnController {
     return this.columnService.create(column, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, columnAuthor)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update column' })
@@ -193,7 +193,7 @@ export class ColumnController {
     return this.columnService.update(id, column);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, columnAuthor)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Delete column' })

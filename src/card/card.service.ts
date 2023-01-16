@@ -46,9 +46,10 @@ export class CardService {
     const column = await this.columnRepository.findOne({
       where: { id: columnId },
     });
+    console.log(user);
     const card = this.cardRepository.create({
       ...createCardDto,
-      column,
+      column: column,
       author_: user,
     });
     return this.cardRepository.save(card);
