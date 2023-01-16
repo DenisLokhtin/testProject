@@ -10,9 +10,6 @@ export class ColumnEntity {
     @Column()
     title: string;
 
-    @Column()
-    text: string;
-
     @ManyToOne(() => UserEntity, (user) => user.columns, { onDelete: "CASCADE" })
     author_: UserEntity;
 
