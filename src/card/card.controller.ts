@@ -142,6 +142,37 @@ export class CardController {
   @ApiResponse({
     status: 201,
     description: 'The card has been successfully created.',
+    schema: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'integer',
+          description: 'id',
+          example: '42',
+        },
+        title: {
+          type: 'string',
+          description: 'title of card',
+          example: 'news',
+        },
+        text: {
+          type: 'string',
+          description: 'text of card',
+          example: 'test text',
+        },
+        author_: {
+          type: 'object',
+          description: 'user object',
+          example: {
+            id: 1,
+            email: 'John@gmail.com',
+            password:
+              '$2b$10$.275k5seNCfHq1CE0EmPDOJkozr2QEJNFH8JSaYAdErmqN.MRXv9G',
+            access_token: null,
+          },
+        },
+      },
+    },
   })
   async create(
     @Body() createCardDto: CreateCardDto,

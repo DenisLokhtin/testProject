@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentEntity } from './entity/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -28,9 +28,10 @@ export class CommentService {
     user: UserEntity,
   ) {
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!card) throw new NotFoundException('Card not found');
     const comment = await this.commentRepository.create({
       ...createCommentDto,
-      card,
+      card: card,
       author_: user,
     });
     await this.commentRepository.save(comment);
@@ -47,6 +48,7 @@ export class CommentService {
     let comment = await this.commentRepository.findOne({
       where: { id: id, card: { id: cardId } },
     });
+    if (!comment) throw new NotFoundException('Comment not found');
     await this.commentRepository.update(
       { id: id, card: { id: cardId } },
       updateCommentDto,

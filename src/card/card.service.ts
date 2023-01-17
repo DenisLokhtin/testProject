@@ -46,7 +46,7 @@ export class CardService {
     const column = await this.columnRepository.findOne({
       where: { id: columnId },
     });
-    console.log(user);
+    if (!column) throw new NotFoundException('Column not found');
     const card = this.cardRepository.create({
       ...createCardDto,
       column: column,
@@ -68,7 +68,7 @@ export class CardService {
         id: id,
       },
     });
-    if (!card) throw new NotFoundException();
+    if (!card) throw new NotFoundException('Card not found');
     if (updateCardDto.title) card.title = updateCardDto.title;
     if (updateCardDto.text) card.text = updateCardDto.text;
     return this.cardRepository.save(card);

@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ColumnEntity } from '../../column/entity/column.entity';
@@ -12,12 +17,17 @@ export class columnAuthor implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const userId = request.params.userId;
+
+    const userId = request.user.id;
+    const id = request.params.id;
 
     const column = await this.columnEntityRepository.findOne({
-      where: { author_: userId },
+      where: { id: id },
+      relations: { author_: true },
     });
 
-    return !!column;
+    if (!column) throw new NotFoundException('card not found');
+
+    return userId === column.author_.id;
   }
 }

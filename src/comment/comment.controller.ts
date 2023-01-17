@@ -70,6 +70,48 @@ export class CommentController {
       },
     },
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Return new comment',
+    schema: {
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            description: 'id',
+            example: '42',
+          },
+          text: {
+            type: 'string',
+            description: 'text of card',
+            example: 'test text',
+          },
+          created_at: {
+            type: 'string',
+            description: 'date of create',
+            example: '2023-01-16T18:40:14.413Z',
+          },
+          author: {
+            type: 'object',
+            description: 'user',
+            example: {
+              id: 1,
+            },
+          },
+          card: {
+            type: 'object',
+            description: 'card',
+            example: {
+              id: 3,
+              title: 'news',
+              text: 'test text',
+            },
+          },
+        },
+      },
+    },
+  })
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Post()
@@ -82,6 +124,32 @@ export class CommentController {
   }
 
   @ApiOperation({ summary: 'Find one comment by id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return comment',
+    schema: {
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            description: 'id',
+            example: '42',
+          },
+          text: {
+            type: 'string',
+            description: 'text of card',
+            example: 'test text',
+          },
+          created_at: {
+            type: 'string',
+            description: 'date of create',
+            example: '2023-01-16T18:40:14.413Z',
+          },
+        },
+      },
+    },
+  })
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Get(':id')
@@ -98,6 +166,32 @@ export class CommentController {
           type: 'string',
           description: 'text of card',
           example: 'test text',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Return comment',
+    schema: {
+      items: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            description: 'id',
+            example: '42',
+          },
+          text: {
+            type: 'string',
+            description: 'text of card',
+            example: 'test text',
+          },
+          created_at: {
+            type: 'string',
+            description: 'date of create',
+            example: '2023-01-16T18:40:14.413Z',
+          },
         },
       },
     },
