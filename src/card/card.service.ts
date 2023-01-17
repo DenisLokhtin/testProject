@@ -50,7 +50,10 @@ export class CardService {
     const card = this.cardRepository.create({
       ...createCardDto,
       column: column,
-      author_: user,
+      author_: {
+        id: user.id,
+        email: user.email,
+      },
     });
     return this.cardRepository.save(card);
   }

@@ -27,7 +27,10 @@ export class ColumnService {
   async create(column: CreateColumnDto, user: UserEntity) {
     return await this.columnRepository.save({
       title: column.title,
-      author_: user,
+      author_: {
+        id: user.id,
+        email: user.email,
+      },
     });
   }
 

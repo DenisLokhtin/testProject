@@ -152,9 +152,12 @@ export class CommentController {
   })
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @Get(':id')
-  findOne(@Param('id') id: number, @Param('cardId') cardId: number) {
-    return this.commentService.findOne(id, cardId);
+  @Get(':commentId')
+  findOne(
+    @Param('commentId') commentId: number,
+    @Param('cardId') cardId: number,
+  ) {
+    return this.commentService.findOne(commentId, cardId);
   }
 
   @ApiOperation({ summary: 'Update a comment by id' })
@@ -198,20 +201,23 @@ export class CommentController {
   })
   @UseGuards(AuthGuard, commentAuthor)
   @ApiBearerAuth()
-  @Patch(':id')
+  @Patch(':commentId')
   updateComment(
-    @Param('id') id: number,
+    @Param('commentId') commentId: number,
     @Param('cardId') cardId: number,
     @Body() data: UpdateCommentDto,
   ) {
-    return this.commentService.update(id, cardId, data);
+    return this.commentService.update(commentId, cardId, data);
   }
 
   @ApiOperation({ summary: 'Delete a comment by id' })
   @UseGuards(AuthGuard, commentAuthor)
   @ApiBearerAuth()
-  @Delete(':id')
-  remove(@Param('id') id: number, @Param('cardId') cardId: number) {
-    return this.commentService.delete(id, cardId);
+  @Delete(':commentId')
+  remove(
+    @Param('commentId') commentId: number,
+    @Param('cardId') cardId: number,
+  ) {
+    return this.commentService.delete(commentId, cardId);
   }
 }
