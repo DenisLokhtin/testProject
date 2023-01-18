@@ -17,6 +17,9 @@ export class CardEntity {
   id: number;
 
   @Column()
+  test: string;
+
+  @Column()
   title: string;
 
   @Column()
