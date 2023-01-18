@@ -28,7 +28,7 @@ export class commentAuthor implements CanActivate {
       relations: { author_: true },
     });
 
-    if (!comment) throw new NotFoundException('card not found');
+    if (!comment) throw new NotFoundException('comment not found');
 
     return userId === comment.author_.id;
   }

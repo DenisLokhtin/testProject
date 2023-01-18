@@ -7,22 +7,20 @@ import { sign } from 'jsonwebtoken';
 import { LoginUserDto } from './dto/login.dto';
 import { compare } from 'bcrypt';
 import { UserResponseInterface } from './types/userResponse.interface';
+import { UserRepositoryService } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepo: Repository<UserEntity>,
-  ) {}
+  constructor(private readonly userRepositoryService: UserRepositoryService) {}
 
   async findAll() {
-    return await this.userRepo.find();
+    return await this.userRepositoryService.findAll();
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const userByEmail = await this.userRepo.findOneBy({
-      email: createUserDto.email,
-    });
+    const userByEmail = await this.userRepositoryService.findByEmail(
+      createUserDto.email,
+    );
     if (userByEmail) {
       throw new HttpException(
         'User already exists',
@@ -31,19 +29,14 @@ export class UserService {
     }
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
-    return await this.userRepo.save(newUser);
+    return await this.userRepositoryService.createUser(newUser);
   }
 
   async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
-    const user = await this.userRepo.find({
-      select: {
-        id: true,
-        email: true,
-        password: true,
-      },
-      where: { email: loginUserDto.email },
-    });
-    if (!user.length) {
+    const user = await this.userRepositoryService.findByEmail(
+      loginUserDto.email,
+    );
+    if (!user) {
       throw new HttpException(
         'Credentials are not valid',
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -52,7 +45,7 @@ export class UserService {
 
     const isPasswordCorrect = await compare(
       loginUserDto.password,
-      user[0].password,
+      user.password,
     );
 
     if (!isPasswordCorrect) {
@@ -61,15 +54,12 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    delete user[0].password;
-    return user[0];
+    delete user.password;
+    return user;
   }
 
   async findById(id: number): Promise<UserEntity> {
-    return this.userRepo.findOne({
-      where: { id: id },
-      relations: ['cards', 'comments', 'columns'],
-    });
+    return this.userRepositoryService.findById(id);
   }
 
   generateJwt(user: UserEntity): string {

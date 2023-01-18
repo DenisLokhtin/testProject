@@ -26,7 +26,7 @@ export class columnAuthor implements CanActivate {
       relations: { author_: true },
     });
 
-    if (!column) throw new NotFoundException('card not found');
+    if (!column) throw new NotFoundException('column not found');
 
     return userId === column.author_.id;
   }

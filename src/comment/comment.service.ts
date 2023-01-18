@@ -1,25 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CommentEntity } from './entity/comment.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/createComment.dto';
 import { UpdateCommentDto } from './dto/updateComment.dto';
-import { CardEntity } from '../card/entity/card.entity';
 import { UserEntity } from '../user/entity/user.entity';
+import { CommentRepositoryService } from './comment.repository';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    @InjectRepository(CommentEntity)
-    private commentRepository: Repository<CommentEntity>,
-    @InjectRepository(CardEntity)
-    private cardRepository: Repository<CardEntity>,
-  ) {}
+  constructor(private commentRepositoryService: CommentRepositoryService) {}
 
   async findAll(cardId: number) {
-    return await this.commentRepository.find({
-      where: { card: { id: cardId } },
-    });
+    return await this.commentRepositoryService.findAll(cardId);
   }
 
   async create(
@@ -27,22 +17,17 @@ export class CommentService {
     createCommentDto: CreateCommentDto,
     user: UserEntity,
   ) {
-    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    const card = await this.commentRepositoryService.findOneCard(cardId);
     if (!card) throw new NotFoundException('Card not found');
-    return await this.commentRepository.save({
-      text: createCommentDto.text,
-      card: card,
-      author_: {
-        id: user.id,
-        email: user.email,
-      },
-    });
+    return await this.commentRepositoryService.create(
+      cardId,
+      createCommentDto,
+      user,
+    );
   }
 
   async findOne(commentId: number, cardId: number) {
-    return await this.commentRepository.findOne({
-      where: { id: commentId, card: { id: cardId } },
-    });
+    return await this.commentRepositoryService.findOne(commentId, cardId);
   }
 
   async update(
@@ -50,25 +35,20 @@ export class CommentService {
     cardId: number,
     updateCommentDto: UpdateCommentDto,
   ) {
-    let comment = await this.commentRepository.findOne({
-      where: { id: commentId, card: { id: cardId } },
-    });
+    let comment = await this.commentRepositoryService.findOne(
+      commentId,
+      cardId,
+    );
     if (!comment) throw new NotFoundException('Comment not found');
-    await this.commentRepository.update(
-      { id: commentId, card: { id: cardId } },
+    await this.commentRepositoryService.update(
+      commentId,
+      cardId,
       updateCommentDto,
     );
-    comment = await this.commentRepository.findOne({
-      where: { id: commentId, card: { id: cardId } },
-    });
-    return comment;
+    return await this.commentRepositoryService.findOne(commentId, cardId);
   }
 
   async delete(commentId: number, cardId: number) {
-    await this.commentRepository.delete({
-      id: commentId,
-      card: { id: cardId },
-    });
-    return { deleted: true };
+    return await this.commentRepositoryService.delete(commentId, cardId);
   }
 }

@@ -1,41 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CardEntity } from './entity/card.entity';
-import { ColumnEntity } from '../column/entity/column.entity';
 import { CreateCardDto } from './dto/createCard.dto';
-import { Repository } from 'typeorm';
 import { UpdateCardDto } from './dto/updateCard.dto';
 import { UserEntity } from '../user/entity/user.entity';
+import { CardRepositoryService } from './card.repository';
 
 @Injectable()
 export class CardService {
-  constructor(
-    @InjectRepository(CardEntity)
-    private readonly cardRepository: Repository<CardEntity>,
-    @InjectRepository(ColumnEntity)
-    private readonly columnRepository: Repository<ColumnEntity>,
-  ) {}
+  constructor(private readonly cardRepositoryService: CardRepositoryService) {}
 
   async findAll(columnId: number): Promise<CardEntity[]> {
-    return this.cardRepository.find({
-      where: {
-        column: {
-          id: columnId,
-        },
-      },
-    });
+    return this.cardRepositoryService.findAll(columnId);
   }
 
   async findOne(id: number, columnId: number): Promise<CardEntity> {
-    return this.cardRepository.findOne({
-      where: {
-        column: {
-          id: columnId,
-        },
-        id: id,
-      },
-      relations: ['column', 'author_'],
-    });
+    return this.cardRepositoryService.findOne(id, columnId);
   }
 
   async create(
@@ -43,19 +22,9 @@ export class CardService {
     columnId: number,
     user: UserEntity,
   ): Promise<CardEntity> {
-    const column = await this.columnRepository.findOne({
-      where: { id: columnId },
-    });
-    if (!column) throw new NotFoundException('Column not found');
-    const card = this.cardRepository.create({
-      ...createCardDto,
-      column: column,
-      author_: {
-        id: user.id,
-        email: user.email,
-      },
-    });
-    return this.cardRepository.save(card);
+    const column = await this.cardRepositoryService.findOneColumn(columnId);
+    if (!column) throw new NotFoundException('column not found');
+    return await this.cardRepositoryService.create(createCardDto, column, user);
   }
 
   async update(
@@ -63,30 +32,16 @@ export class CardService {
     updateCardDto: UpdateCardDto,
     columnId: number,
   ): Promise<CardEntity> {
-    const card = await this.cardRepository.findOne({
-      where: {
-        column: {
-          id: columnId,
-        },
-        id: id,
-      },
-    });
+    const card = await this.cardRepositoryService.findOne(id, columnId);
     if (!card) throw new NotFoundException('Card not found');
     if (updateCardDto.title) card.title = updateCardDto.title;
     if (updateCardDto.text) card.text = updateCardDto.text;
-    return this.cardRepository.save(card);
+    return this.cardRepositoryService.update(card);
   }
 
   async remove(id: number, columnId: number): Promise<void> {
-    const card = await this.cardRepository.findOne({
-      where: {
-        column: {
-          id: columnId,
-        },
-        id: id,
-      },
-    });
+    const card = await this.cardRepositoryService.findOne(id, columnId);
     if (!card) throw new NotFoundException();
-    await this.cardRepository.remove(card);
+    await this.cardRepositoryService.remove(card);
   }
 }
