@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ColumnEntity } from '../../column/entity/column.entity';
-import { CardEntity } from '../../card/entity/card.entity';
 import { CommentEntity } from '../../comment/entity/comment.entity';
 
 @Injectable()

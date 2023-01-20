@@ -6,7 +6,6 @@ import { CreateColumnDto } from './dto/createColumn.dto';
 import { UpdateColumnDto } from './dto/updateColumn.dto';
 import { UserEntity } from '../user/entity/user.entity';
 
-@Injectable()
 export class ColumnRepositoryService {
   constructor(
     @InjectRepository(ColumnEntity)
